@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("API/v1/visualizaciones")
+@CrossOrigin("*")
 public class VisualizacionController {
     @Autowired
     private VisualizacionService visualizacionService;

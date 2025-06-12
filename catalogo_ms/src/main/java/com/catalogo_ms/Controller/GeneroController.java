@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("API/v1/genero")
+@CrossOrigin("*")
 public class GeneroController {
 
     @Autowired
