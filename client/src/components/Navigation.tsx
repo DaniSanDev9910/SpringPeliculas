@@ -1,4 +1,4 @@
-import { Drama, Film, Info, Mail, Plus } from 'lucide-react';
+import { Drama, Film, Plus } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 
 export function Navigation() {
@@ -7,9 +7,7 @@ export function Navigation() {
   const navItems = [
     { path: '/', label: 'Home', icon: Film },
     { path: '/add-movie', label: 'Add Movie', icon: Plus },
-    { path: '/about', label: 'About', icon: Info },
-    { path: '/contact', label: 'Contact', icon: Mail },
-    { path: '/genres', label: 'Genres', icon: Drama }, // ← corregido
+    { path: '/genres', label: 'Genres', icon: Drama },
   ];
 
   return (

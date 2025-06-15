@@ -1,15 +1,15 @@
 import axios from 'axios';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Genre } from '../../types';
+import { GeneroDto } from '../../types';
 import { GenresModalDelete } from './modals/GenresModalDelete';
 import { GenresModalForm } from './modals/GenresModalForm';
 
 export function Genres() {
-  const [genres, setGenres] = useState<Genre[]>([]);
+  const [genres, setGenres] = useState<GeneroDto[]>([]);
   const [openForm, setOpenForm] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [selectedGenre, setSelectedGenre] = useState<Genre | null>(null);
+  const [selectedGenre, setSelectedGenre] = useState<GeneroDto | null>(null);
 
   const loadGenres = () => {
     axios

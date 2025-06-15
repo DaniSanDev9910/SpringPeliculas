@@ -1,85 +1,104 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Plus, Star } from 'lucide-react';
-import { obtenerGeneros } from '../services/generoService';
+import { getGenres } from '../services/genreService';
+import { createMovie } from '../services/movieService';
+import { PeliculaDto, GeneroDto } from '../types';
+import { useForm } from '../hooks/useForm';
+import { ConfirmationModal } from '../components/ConfirmationModal';
 
 export function AddMovie() {
   const navigate = useNavigate();
   
-  const [formData, setFormData] = useState({
-    title: '',
-    director: '',
-    year: '',
-    genre: '',
-    rating: '',
-    poster: '',
-    description: ''
+  type MovieForm = {
+    nombre: string;
+    director: string;
+    anio: string;
+    idGenero: string;
+    rating: string;
+    imagen: string;
+    sinopsis: string;
+  };
+
+  const {
+    values,
+    errors,
+    handleChange,
+    handleSubmit,
+  } = useForm<MovieForm>({
+    initialValues: {
+      nombre: '',
+      director: '',
+      anio: '',
+      idGenero: '',
+      rating: '',
+      imagen: '',
+      sinopsis: '',
+    },
+    validate: (vals) => {
+      const newErrors: Partial<Record<keyof MovieForm, string>> = {};
+
+      if (!vals.nombre.trim()) newErrors.nombre = 'Movie title is required';
+      if (!vals.director.trim()) newErrors.director = 'Director is required';
+      if (!vals.anio) newErrors.anio = 'Release year is required';
+      if (!vals.idGenero) newErrors.idGenero = 'Genre is required';
+      if (!vals.rating) newErrors.rating = 'Rating is required';
+      if (!vals.sinopsis.trim()) newErrors.sinopsis = 'Sinopsis is required';
+
+      const yearNum = parseInt(vals.anio);
+      if (!isNaN(yearNum) && (yearNum < 1950 || yearNum > new Date().getFullYear())) {
+        newErrors.anio = 'Please enter a valid year (1950-2025)';
+      }
+
+      const ratingNum = parseFloat(vals.rating);
+      if (!isNaN(ratingNum) && (ratingNum < 0 || ratingNum > 10)) {
+        newErrors.rating = 'Rating must be between 0 and 10';
+      }
+
+      return newErrors;
+    },
+    onSubmit: async (vals) => {
+      // Prepare DTO for backend
+      const dto: PeliculaDto = {
+        id: '',
+        nombre: vals.nombre.trim(),
+        sinopsis: vals.sinopsis.trim(),
+        imagen: vals.imagen.trim(),
+        idGenero: vals.idGenero,
+        director: vals.director.trim(),
+        anio: parseInt(vals.anio),
+        rating: parseFloat(vals.rating),
+      };
+
+      try {
+        await createMovie(dto);
+        setModal({ type: 'success', title: 'Success', message: 'Movie created successfully!' });
+      } catch (err) {
+        console.error('Failed to save movie', err);
+        setModal({ type: 'error', title: 'Error', message: 'There was a problem creating the movie.' });
+      }
+    },
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [genres, setGenres] = useState<GeneroDto[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  /*const genres = [
-    'Action', 'Adventure', 'Animation', 'Comedy', 'Crime', 'Documentary',
-    'Drama', 'Fantasy', 'Horror', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'Western'
-  ];*/
+  const [modal, setModal] = useState<null | { type: 'success' | 'error'; title: string; message: string }>(null);
 
-  const [genres, setGenres] = useState<any[]>([]);
-  const [cargando, setCargando] = useState(true);
-  const [error, setError] = useState(null);
+  const closeModal = () => {
+    if (modal?.type === 'success') {
+      navigate('/');
+    }
+    setModal(null);
+  };
 
   useEffect(() => {
-    obtenerGeneros()
+    getGenres()
       .then(setGenres)
       .catch(setError)
-      .finally(() => setCargando(false));
+      .finally(() => setLoading(false));
   }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const newErrors: Record<string, string> = {};
-    
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!formData.director.trim()) newErrors.director = 'Director is required';
-    if (!formData.year) newErrors.year = 'Year is required';
-    if (!formData.genre) newErrors.genre = 'Genre is required';
-    if (!formData.rating) newErrors.rating = 'Rating is required';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
-    
-    const year = parseInt(formData.year);
-    if (year < 1800 || year > new Date().getFullYear() + 5) {
-      newErrors.year = 'Please enter a valid year';
-    }
-    
-    const rating = parseFloat(formData.rating);
-    if (rating < 0 || rating > 10) {
-      newErrors.rating = 'Rating must be between 0 and 10';
-    }
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length === 0) {
-      // addMovie({
-      //   title: formData.title.trim(),
-      //   director: formData.director.trim(),
-      //   year: parseInt(formData.year),
-      //   genre: formData.genre,
-      //   rating: parseFloat(formData.rating),
-      //   poster: formData.poster.trim() || undefined,
-      //   description: formData.description.trim()
-      // });
-      
-      // navigate('/');
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -88,24 +107,29 @@ export function AddMovie() {
         <p className="text-slate-400">Share your favorite films with the world</p>
       </div>
 
+      {loading ? (
+        <p className="text-center text-slate-300">Loading genres...</p>
+      ) : error ? (
+        <p className="text-center text-red-400">{error}</p>
+      ) : (
       <form onSubmit={handleSubmit} className="bg-slate-800 rounded-xl p-8 shadow-lg">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="nombre" className="block text-sm font-medium text-slate-300 mb-2">
               Movie Title *
             </label>
             <input
               type="text"
-              id="title"
-              name="title"
-              value={formData.title}
+              id="nombre"
+              name="nombre"
+              value={values.nombre}
               onChange={handleChange}
               className={`w-full px-4 py-3 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-all duration-200 ${
-                errors.title ? 'border-red-500 focus:ring-red-500' : 'border-slate-600 focus:ring-amber-500'
+                errors.nombre ? 'border-red-500 focus:ring-red-500' : 'border-slate-600 focus:ring-amber-500'
               }`}
               placeholder="Enter movie title"
             />
-            {errors.title && <p className="mt-1 text-sm text-red-400">{errors.title}</p>}
+            {errors.nombre && <p className="mt-1 text-sm text-red-400">{errors.nombre}</p>}
           </div>
 
           <div>
@@ -116,7 +140,7 @@ export function AddMovie() {
               type="text"
               id="director"
               name="director"
-              value={formData.director}
+              value={values.director}
               onChange={handleChange}
               className={`w-full px-4 py-3 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-all duration-200 ${
                 errors.director ? 'border-red-500 focus:ring-red-500' : 'border-slate-600 focus:ring-amber-500'
@@ -127,44 +151,44 @@ export function AddMovie() {
           </div>
 
           <div>
-            <label htmlFor="year" className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="anio" className="block text-sm font-medium text-slate-300 mb-2">
               Release Year *
             </label>
             <input
               type="number"
-              id="year"
-              name="year"
-              value={formData.year}
+              id="anio"
+              name="anio"
+              value={values.anio}
               onChange={handleChange}
               min="1800"
               max={new Date().getFullYear() + 5}
-              className={`w-full px-4 py-3 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-all duration-200 ${
-                errors.year ? 'border-red-500 focus:ring-red-500' : 'border-slate-600 focus:ring-amber-500'
+              className={`appearance-none w-full px-4 py-3 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-all duration-200 ${
+                errors.anio ? 'border-red-500 focus:ring-red-500' : 'border-slate-600 focus:ring-amber-500'
               }`}
               placeholder="2024"
             />
-            {errors.year && <p className="mt-1 text-sm text-red-400">{errors.year}</p>}
+            {errors.anio && <p className="mt-1 text-sm text-red-400">{errors.anio}</p>}
           </div>
 
           <div>
-            <label htmlFor="genre" className="block text-sm font-medium text-slate-300 mb-2">
+            <label htmlFor="idGenero" className="block text-sm font-medium text-slate-300 mb-2">
               Genre *
             </label>
             <select
-              id="genre"
-              name="genre"
-              value={formData.genre}
+              id="idGenero"
+              name="idGenero"
+              value={values.idGenero}
               onChange={handleChange}
               className={`w-full px-4 py-3 bg-slate-700 border rounded-lg text-white focus:outline-none focus:ring-2 transition-all duration-200 ${
-                errors.genre ? 'border-red-500 focus:ring-red-500' : 'border-slate-600 focus:ring-amber-500'
+                errors.idGenero ? 'border-red-500 focus:ring-red-500' : 'border-slate-600 focus:ring-amber-500'
               }`}
             >
               <option value="">Select a genre</option>
               {genres.map(genre => (
-                <option key={genre.id} value={genre.nombre}>{genre.nombre}</option>
+                <option key={genre.id} value={genre.id}>{genre.nombre}</option>
               ))}
             </select>
-            {errors.genre && <p className="mt-1 text-sm text-red-400">{errors.genre}</p>}
+            {errors.idGenero && <p className="mt-1 text-sm text-red-400">{errors.idGenero}</p>}
           </div>
 
           <div>
@@ -176,12 +200,12 @@ export function AddMovie() {
                 type="number"
                 id="rating"
                 name="rating"
-                value={formData.rating}
+                value={values.rating}
                 onChange={handleChange}
                 min="0"
                 max="10"
                 step="0.1"
-                className={`w-full px-4 py-3 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-all duration-200 pr-10 ${
+                className={`appearance-none w-full px-4 py-3 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-all duration-200 pr-10 ${
                   errors.rating ? 'border-red-500 focus:ring-red-500' : 'border-slate-600 focus:ring-amber-500'
                 }`}
                 placeholder="8.5"
@@ -192,14 +216,14 @@ export function AddMovie() {
           </div>
 
           <div>
-            <label htmlFor="poster" className="block text-sm font-medium text-slate-300 mb-2">
-              Poster URL
+            <label htmlFor="imagen" className="block text-sm font-medium text-slate-300 mb-2">
+              Image URL
             </label>
             <input
               type="url"
-              id="poster"
-              name="poster"
-              value={formData.poster}
+              id="imagen"
+              name="imagen"
+              value={values.imagen}
               onChange={handleChange}
               className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200"
               placeholder="https://example.com/poster.jpg"
@@ -208,21 +232,21 @@ export function AddMovie() {
         </div>
 
         <div className="mt-6">
-          <label htmlFor="description" className="block text-sm font-medium text-slate-300 mb-2">
-            Description *
+          <label htmlFor="sinopsis" className="block text-sm font-medium text-slate-300 mb-2">
+            Sinopsis *
           </label>
           <textarea
-            id="description"
-            name="description"
-            value={formData.description}
+            id="sinopsis"
+            name="sinopsis"
+            value={values.sinopsis}
             onChange={handleChange}
             rows={4}
             className={`w-full px-4 py-3 bg-slate-700 border rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 transition-all duration-200 ${
-              errors.description ? 'border-red-500 focus:ring-red-500' : 'border-slate-600 focus:ring-amber-500'
+              errors.sinopsis ? 'border-red-500 focus:ring-red-500' : 'border-slate-600 focus:ring-amber-500'
             }`}
             placeholder="Write a brief description of the movie..."
           />
-          {errors.description && <p className="mt-1 text-sm text-red-400">{errors.description}</p>}
+          {errors.sinopsis && <p className="mt-1 text-sm text-red-400">{errors.sinopsis}</p>}
         </div>
 
         <div className="flex gap-4 mt-8">
@@ -243,6 +267,15 @@ export function AddMovie() {
           </button>
         </div>
       </form>
+      )}
+
+      <ConfirmationModal
+        isOpen={modal !== null}
+        onClose={closeModal}
+        title={modal?.title ?? ''}
+        message={modal?.message ?? ''}
+        type={modal?.type ?? 'success'}
+      />
     </div>
   );
 }

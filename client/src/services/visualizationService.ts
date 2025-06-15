@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { VisualizacionDto } from '../dto/VisualizacionDto';
+import { VisualizacionDto } from '../types';
 
 interface VisualizacionRequest {
   id: string;
@@ -9,7 +9,7 @@ interface VisualizacionRequest {
 
 const API_URL = '/API/v1/visualizaciones/';
 
-export const crearVisualizacion = async (idPelicula: string): Promise<void> => {
+export const createVisualization = async (idPelicula: string): Promise<void> => {
   const visualizacion: VisualizacionRequest = {
     id: '',
     idPelicula,
@@ -23,7 +23,7 @@ export const crearVisualizacion = async (idPelicula: string): Promise<void> => {
   }
 };
 
-export const obtenerVisualizaciones = async (numeroFilas: number = 20): Promise<VisualizacionDto[]> => {
+export const getVisualizations = async (numeroFilas: number = 20): Promise<VisualizacionDto[]> => {
   try {
     const { data } = await axios.get<VisualizacionDto[]>(`${API_URL}consultaRecomendacion`, {
       params: { numeroFilas }

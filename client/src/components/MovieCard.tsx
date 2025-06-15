@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { User, Calendar, Star, Film, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router';
-import { PeliculaDto } from '../dto/PeliculaDto';
-import { GeneroDto } from '../dto/GeneroDto';
-import { obtenerGeneros } from '../services/generoService';
-import { crearVisualizacion, obtenerVisualizaciones } from '../services/visualizacionService';
+import { PeliculaDto, GeneroDto } from '../types';
+import { getGenres } from '../services/genreService';
+import { createVisualization, getVisualizations } from '../services/visualizationService';
 
 interface MovieCardProps {
   movie: PeliculaDto;
@@ -19,7 +18,7 @@ export function MovieCard({ movie }: MovieCardProps) {
   useEffect(() => {
     const cargarGeneros = async () => {
       try {
-        const data = await obtenerGeneros();
+        const data = await getGenres();
         setGeneros(data);
       } catch (error) {
         console.error('Error al cargar géneros:', error);
@@ -31,7 +30,7 @@ export function MovieCard({ movie }: MovieCardProps) {
   useEffect(() => {
     const cargarVisualizaciones = async () => {
       try {
-        const data = await obtenerVisualizaciones();
+        const data = await getVisualizations();
         const visualizacion = data.find(v => v.idPelicula === movie.id);
         setVisualizaciones(visualizacion?.numeroVisualizaciones || 0);
       } catch (error) {
@@ -50,7 +49,7 @@ export function MovieCard({ movie }: MovieCardProps) {
 
   const handleClick = async () => {
     try {
-      await crearVisualizacion(movie.id);
+      await createVisualization(movie.id);
       setVisualizaciones(prev => prev + 1); // Actualizamos localmente el contador
       navigate(`/movie/${movie.id}`);
     } catch (error) {
