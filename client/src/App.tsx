@@ -1,19 +1,15 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { MoviesProvider } from './context/MoviesContext';
+import { BrowserRouter as Router, Routes, Route } from 'react-router';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Movie } from './pages/Movie';
 import { AddMovie } from './pages/AddMovie';
 import { About } from './pages/About';
-import { AddMovie } from './pages/AddMovie';
 import { Contact } from './pages/Contact';
 import { Genres } from './pages/Genres/GenresView';
-import { Home } from './pages/Home';
 
 function App() {
   return (
-    <MoviesProvider>
       <Router>
         <Routes>
           <Route path="/" element={<Layout />}>
@@ -26,7 +22,6 @@ function App() {
           </Route>
         </Routes>
       </Router>
-    </MoviesProvider>
   );
 }
 

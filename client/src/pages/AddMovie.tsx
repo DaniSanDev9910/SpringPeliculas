@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { useMovies } from '../context/MoviesContext';
 import { Plus, Star } from 'lucide-react';
 import { obtenerGeneros } from '../services/generoService';
 
 export function AddMovie() {
   const navigate = useNavigate();
-  const { addMovie } = useMovies();
   
   const [formData, setFormData] = useState({
     title: '',
@@ -61,17 +59,17 @@ export function AddMovie() {
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      addMovie({
-        title: formData.title.trim(),
-        director: formData.director.trim(),
-        year: parseInt(formData.year),
-        genre: formData.genre,
-        rating: parseFloat(formData.rating),
-        poster: formData.poster.trim() || undefined,
-        description: formData.description.trim()
-      });
+      // addMovie({
+      //   title: formData.title.trim(),
+      //   director: formData.director.trim(),
+      //   year: parseInt(formData.year),
+      //   genre: formData.genre,
+      //   rating: parseFloat(formData.rating),
+      //   poster: formData.poster.trim() || undefined,
+      //   description: formData.description.trim()
+      // });
       
-      navigate('/');
+      // navigate('/');
     }
   };
 
