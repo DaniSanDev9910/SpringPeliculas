@@ -1,1 +1,26 @@
+# Ignorar todo por defecto
+*
+!.gitignore
+
+# Permitir la carpeta client y su contenido
+!client/
+!client/**
+
+# Ignorar node_modules incluso dentro de client
+client/node_modules/
+client2/node_modules/
+
+# Ignorar archivos de configuración y build en client
+client/.env
+client/.env.local
+client/dist/
+client/build/
+
+# Ignorar archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos de IDE
 .idea/
+.vscode/
+*.iml
