@@ -5,4 +5,6 @@ export type PeliculaDto = {
   imagen: string,
   idGenero: string,
   director: string
+  
 };
+
