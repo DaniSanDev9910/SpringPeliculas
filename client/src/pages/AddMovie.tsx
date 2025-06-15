@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useMovies } from '../context/MoviesContext';
 import { Plus, Star } from 'lucide-react';
 import { obtenerGeneros } from '../services/generoService';
 import { createMovie } from '../services/peliculaService';
