@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { PeliculaDto } from '../dto/PeliculaDto';
 import { GeneroDto } from '../dto/GeneroDto';
 import { obtenerGeneros } from '../services/generoService';
+import { crearVisualizacion } from '../services/visualizacionService';
 
 interface MovieCardProps {
   movie: PeliculaDto;
@@ -33,8 +34,17 @@ export function MovieCard({ movie }: MovieCardProps) {
     }
   }, [generos, movie.idGenero]);
 
-  const handleClick = () => {
-    navigate(`/movie/${movie.id}`);
+  const handleClick = async () => {
+    try {
+      // Primero registramos la visualización
+      await crearVisualizacion(movie.id);
+      // Luego navegamos a la página de reproducción
+      navigate(`/movie/${movie.id}`);
+    } catch (error) {
+      console.error('Error al registrar visualización:', error);
+      // Aún navegamos a la página de reproducción aunque falle el registro
+      navigate(`/movie/${movie.id}`);
+    }
   };
 
   return (
