@@ -1,12 +1,36 @@
-import React from 'react';
-import { User, Calendar, Star } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { User, Calendar, Star, Film } from 'lucide-react';
 import { PeliculaDto } from '../dto/PeliculaDto';
+import { GeneroDto } from '../dto/GeneroDto';
+import { obtenerGeneros } from '../services/generoService';
 
 interface MovieCardProps {
   movie: PeliculaDto;
 }
 
 export function MovieCard({ movie }: MovieCardProps) {
+  const [generos, setGeneros] = useState<GeneroDto[]>([]);
+  const [generoNombre, setGeneroNombre] = useState<string>('');
+
+  useEffect(() => {
+    const cargarGeneros = async () => {
+      try {
+        const data = await obtenerGeneros();
+        setGeneros(data);
+      } catch (error) {
+        console.error('Error al cargar géneros:', error);
+      }
+    };
+    cargarGeneros();
+  }, []);
+
+  useEffect(() => {
+    if (generos.length > 0 && movie.idGenero) {
+      const genero = generos.find(g => g.id === movie.idGenero);
+      setGeneroNombre(genero?.nombre || '');
+    }
+  }, [generos, movie.idGenero]);
+
   return (
     <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group">
       <div className="aspect-w-16 aspect-h-9 bg-slate-700">
@@ -38,7 +62,7 @@ export function MovieCard({ movie }: MovieCardProps) {
           {movie.sinopsis}
         </p>
         
-        <div className="flex items-center justify-between text-sm text-slate-400">
+        <div className="flex items-center justify-between text-sm text-slate-400 mb-3">
           <div className="flex items-center space-x-1">
             <User className="h-4 w-4" />
             <span>{movie.director}</span>
@@ -48,6 +72,13 @@ export function MovieCard({ movie }: MovieCardProps) {
             <span>{movie.anio}</span>
           </div>
         </div>
+
+        {generoNombre && (
+          <div className="flex items-center space-x-1 text-sm">
+            <Film className="h-4 w-4 text-amber-500" />
+            <span className="text-amber-500">{generoNombre}</span>
+          </div>
+        )}
       </div>
     </div>
   );
