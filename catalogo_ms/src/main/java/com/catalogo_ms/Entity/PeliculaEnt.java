@@ -27,4 +27,8 @@ public class PeliculaEnt {
     private String imagen;
     @Column(name = "director")
     private String director;
+    @Column(name = "anio")
+    private int anio;
+    @Column(name = "rating")
+    private double rating;
 }
