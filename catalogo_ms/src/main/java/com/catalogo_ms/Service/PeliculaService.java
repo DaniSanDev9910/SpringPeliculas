@@ -20,9 +20,16 @@ public class PeliculaService {
     @Autowired
     GeneroRepository generoRepository;
 
-    public List<PeliculaDto> findAllPelicula(){
+    public List<PeliculaDto> findAllPelicula(String nombreParcial){
         List<PeliculaDto> listaDto = new ArrayList<>();
-        var listaEnt = peliculaRepository.findAll();
+        Iterable<PeliculaEnt> listaEnt = new ArrayList<>();
+
+        if(nombreParcial.isEmpty()){
+            listaEnt = peliculaRepository.findAll();
+        }
+        else{
+            listaEnt = peliculaRepository.findByNombreParcial(nombreParcial);
+        }
 
         for(PeliculaEnt pelicula : listaEnt){
             PeliculaDto peliculaDto = new PeliculaDto();

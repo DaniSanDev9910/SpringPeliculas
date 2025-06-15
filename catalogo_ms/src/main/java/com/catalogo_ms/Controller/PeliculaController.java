@@ -21,8 +21,8 @@ public class PeliculaController {
     private PeliculaService peliculaService;
 
     @GetMapping("findAllPelicula")
-    public ResponseEntity<List<PeliculaDto>> findAllPelicula(){
-        List<PeliculaDto> listaPelicula = peliculaService.findAllPelicula();
+    public ResponseEntity<List<PeliculaDto>> findAllPelicula(@RequestParam(name = "nombreParcial", required = false) String nombreParcial){
+        List<PeliculaDto> listaPelicula = peliculaService.findAllPelicula(nombreParcial);
 
         return new ResponseEntity<>(listaPelicula, HttpStatus.OK);
     }
