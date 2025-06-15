@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { User, Calendar, Star, Film } from 'lucide-react';
+import { User, Calendar, Star, Film, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { PeliculaDto } from '../dto/PeliculaDto';
 import { GeneroDto } from '../dto/GeneroDto';
 import { obtenerGeneros } from '../services/generoService';
-import { crearVisualizacion } from '../services/visualizacionService';
+import { crearVisualizacion, obtenerVisualizaciones } from '../services/visualizacionService';
 
 interface MovieCardProps {
   movie: PeliculaDto;
@@ -14,6 +14,7 @@ export function MovieCard({ movie }: MovieCardProps) {
   const navigate = useNavigate();
   const [generos, setGeneros] = useState<GeneroDto[]>([]);
   const [generoNombre, setGeneroNombre] = useState<string>('');
+  const [visualizaciones, setVisualizaciones] = useState<number>(0);
 
   useEffect(() => {
     const cargarGeneros = async () => {
@@ -28,6 +29,19 @@ export function MovieCard({ movie }: MovieCardProps) {
   }, []);
 
   useEffect(() => {
+    const cargarVisualizaciones = async () => {
+      try {
+        const data = await obtenerVisualizaciones();
+        const visualizacion = data.find(v => v.idPelicula === movie.id);
+        setVisualizaciones(visualizacion?.numeroVisualizaciones || 0);
+      } catch (error) {
+        console.error('Error al cargar visualizaciones:', error);
+      }
+    };
+    cargarVisualizaciones();
+  }, [movie.id]);
+
+  useEffect(() => {
     if (generos.length > 0 && movie.idGenero) {
       const genero = generos.find(g => g.id === movie.idGenero);
       setGeneroNombre(genero?.nombre || '');
@@ -36,13 +50,11 @@ export function MovieCard({ movie }: MovieCardProps) {
 
   const handleClick = async () => {
     try {
-      // Primero registramos la visualización
       await crearVisualizacion(movie.id);
-      // Luego navegamos a la página de reproducción
+      setVisualizaciones(prev => prev + 1); // Actualizamos localmente el contador
       navigate(`/movie/${movie.id}`);
     } catch (error) {
       console.error('Error al registrar visualización:', error);
-      // Aún navegamos a la página de reproducción aunque falle el registro
       navigate(`/movie/${movie.id}`);
     }
   };
@@ -71,9 +83,15 @@ export function MovieCard({ movie }: MovieCardProps) {
           <h3 className="text-xl font-bold text-white group-hover:text-amber-500 transition-colors duration-200">
             {movie.nombre}
           </h3>
-          <div className="flex items-center bg-amber-500/20 rounded-lg px-2 py-1">
-            <Star className="h-4 w-4 text-amber-500 mr-1" />
-            <span className="text-amber-500 font-semibold">{movie.rating}</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center bg-amber-500/20 rounded-lg px-2 py-1">
+              <Star className="h-4 w-4 text-amber-500 mr-1" />
+              <span className="text-amber-500 font-semibold">{movie.rating}</span>
+            </div>
+            <div className="flex items-center bg-blue-500/20 rounded-lg px-2 py-1">
+              <Eye className="h-4 w-4 text-blue-500 mr-1" />
+              <span className="text-blue-500 font-semibold">{visualizaciones}</span>
+            </div>
           </div>
         </div>
         

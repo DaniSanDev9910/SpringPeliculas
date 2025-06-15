@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { VisualizacionDto } from '../dto/VisualizacionDto';
 
 interface VisualizacionRequest {
   id: string;
@@ -19,5 +20,17 @@ export const crearVisualizacion = async (idPelicula: string): Promise<void> => {
     await axios.post(`${API_URL}createVisualizacion`, visualizacion);
   } catch (error) {
     console.error('Error al registrar visualización:', error);
+  }
+};
+
+export const obtenerVisualizaciones = async (numeroFilas: number = 20): Promise<VisualizacionDto[]> => {
+  try {
+    const { data } = await axios.get<VisualizacionDto[]>(`${API_URL}consultaRecomendacion`, {
+      params: { numeroFilas }
+    });
+    return data;
+  } catch (error) {
+    console.error('Error al obtener visualizaciones:', error);
+    return [];
   }
 };
