@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
+import { updateGenre, createGenre } from '../../../services/genreService';
 import { GeneroDto } from '../../../types';
 
 interface GenresModalFormProps {
@@ -25,13 +26,14 @@ export function GenresModalForm({ isOpen, onClose, onSaved, genre }: GenresModal
         e.preventDefault();
         try {
             if (isEdit && genre) {
-                await axios.put('http://localhost:8090/API/v1/genero/updateGenero', {
+                await updateGenre({
                     id: genre.id,
                     nombre,
                 });
             } else {
-                await axios.post('http://localhost:8090/API/v1/genero/createGenero', {
+                await createGenre({
                     nombre,
+                    id: ''
                 });
             }
 

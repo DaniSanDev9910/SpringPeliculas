@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { GeneroDto } from '../../../types';
+import { deleteGenre } from '../../../services/genreService';
 
 interface GenresModalDeleteProps {
     isOpen: boolean;
@@ -13,11 +14,7 @@ export function GenresModalDelete({ isOpen, onClose, onDeleted, genre }: GenresM
         if (!genre) return;
 
         try {
-            await axios.delete('http://localhost:8090/API/v1/genero/deleteGenero', {
-                data: {
-                    id: genre.id,
-                },
-            });
+            await deleteGenre(genre);
             onDeleted();
             onClose();
         } catch (error) {

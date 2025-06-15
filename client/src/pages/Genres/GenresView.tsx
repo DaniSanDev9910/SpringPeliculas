@@ -1,9 +1,9 @@
-import axios from 'axios';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { GeneroDto } from '../../types';
 import { GenresModalDelete } from './modals/GenresModalDelete';
 import { GenresModalForm } from './modals/GenresModalForm';
+import { getGenres } from '../../services/genreService';
 
 export function Genres() {
   const [genres, setGenres] = useState<GeneroDto[]>([]);
@@ -12,10 +12,9 @@ export function Genres() {
   const [selectedGenre, setSelectedGenre] = useState<GeneroDto | null>(null);
 
   const loadGenres = () => {
-    axios
-      .get('http://localhost:8090/API/v1/genero/findAllGenero')
-      .then((res) => setGenres(res.data))
-      .catch((err) =>  err);
+    getGenres()
+      .then(setGenres)
+      .catch((err) => console.error(err));
   };
 
   useEffect(() => {
