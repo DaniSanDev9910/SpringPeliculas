@@ -25,7 +25,7 @@ export function Genres() {
   return (
     <div className="max-w-4xl mx-auto mt-10">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-white">Géneros de Películas</h1>
+        <h1 className="text-3xl font-bold text-white">Genres of Films</h1>
         <button
           onClick={() => {
             setSelectedGenre(null); // Modo crear
@@ -33,7 +33,7 @@ export function Genres() {
           }}
           className="flex items-center bg-amber-500 hover:bg-amber-600 text-slate-900 font-medium py-2 px-4 rounded-lg transition-colors duration-200"
         >
-          <Plus className="w-4 h-4 mr-2" /> Nuevo género
+          <Plus className="w-4 h-4 mr-2" /> New Genre
         </button>
       </div>
 
@@ -41,8 +41,8 @@ export function Genres() {
         <table className="min-w-full text-left text-slate-300">
           <thead>
             <tr className="border-b border-slate-700 text-slate-400 uppercase text-sm">
-              <th className="py-2 px-4">Nombre</th>
-              <th className="py-2 px-4 text-center">Acciones</th>
+              <th className="py-2 px-4">Name</th>
+              <th className="py-2 px-4 text-center">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -74,7 +74,7 @@ export function Genres() {
             {genres.length === 0 && (
               <tr>
                 <td colSpan={2} className="text-center py-6 text-slate-500">
-                  No hay géneros registrados.
+                  is not genres results
                 </td>
               </tr>
             )}

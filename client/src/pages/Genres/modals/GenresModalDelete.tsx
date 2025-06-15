@@ -30,19 +30,19 @@ export function GenresModalDelete({ isOpen, onClose, onDeleted, genre }: GenresM
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-slate-800 p-6 rounded-xl shadow-xl w-full max-w-md text-white">
-                <h2 className="text-xl font-bold mb-4">¿Eliminar género?</h2>
+                <h2 className="text-xl font-bold mb-4">Delete genre?</h2>
                 <p>
-                    ¿Estás seguro de que deseas eliminar el género <strong>{genre.nombre}</strong>?
+                    ¿are you sure you want to delete the genre <strong>{genre.nombre}</strong>?
                 </p>
                 <div className="flex justify-end mt-6 space-x-2">
                     <button onClick={onClose} className="px-4 py-2 text-slate-400 hover:text-white">
-                        Cancelar
+                        Cancel
                     </button>
                     <button
                         onClick={handleDelete}
                         className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded"
                     >
-                        Eliminar
+                        Delete
                     </button>
                 </div>
             </div>

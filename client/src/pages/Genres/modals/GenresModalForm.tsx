@@ -38,7 +38,7 @@ export function GenresModalForm({ isOpen, onClose, onSaved, genre }: GenresModal
             onSaved();
             onClose();
         } catch (error) {
-            console.error('Error al guardar género:', error);
+            console.error('Error to save genre:', error);
         }
     };
 
@@ -48,7 +48,7 @@ export function GenresModalForm({ isOpen, onClose, onSaved, genre }: GenresModal
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-slate-800 p-6 rounded-xl shadow-xl w-full max-w-md">
                 <h2 className="text-xl font-bold text-white mb-4">
-                    {isEdit ? 'Editar Género' : 'Nuevo Género'}
+                    {isEdit ? 'Edit Genre' : 'New Genre'}
                 </h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
@@ -65,13 +65,13 @@ export function GenresModalForm({ isOpen, onClose, onSaved, genre }: GenresModal
                             onClick={onClose}
                             className="px-4 py-2 text-slate-400 hover:text-white"
                         >
-                            Cancelar
+                            Cancel
                         </button>
                         <button
                             type="submit"
                             className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded"
                         >
-                            Guardar
+                            Save
                         </button>
                     </div>
                 </form>
