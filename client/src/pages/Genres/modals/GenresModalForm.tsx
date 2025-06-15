@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { FormEvent, useEffect, useState } from 'react';
-import { Genre } from '../../../types';
+import { GeneroDto } from '../../../types';
 
 interface GenresModalFormProps {
     isOpen: boolean;
     onClose: () => void;
     onSaved: () => void;
-    genre: Genre | null;
+    genre: GeneroDto | null;
 }
 
 export function GenresModalForm({ isOpen, onClose, onSaved, genre }: GenresModalFormProps) {
@@ -38,6 +38,7 @@ export function GenresModalForm({ isOpen, onClose, onSaved, genre }: GenresModal
             onSaved();
             onClose();
         } catch (error) {
+          console.error('Error:', error);
         }
     };
 

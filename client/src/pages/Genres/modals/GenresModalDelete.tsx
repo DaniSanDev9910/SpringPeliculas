@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { Genre } from '../../../types';
+import { GeneroDto } from '../../../types';
 
 interface GenresModalDeleteProps {
     isOpen: boolean;
     onClose: () => void;
     onDeleted: () => void;
-    genre: Genre | null;
+    genre: GeneroDto | null;
 }
 
 export function GenresModalDelete({ isOpen, onClose, onDeleted, genre }: GenresModalDeleteProps) {
@@ -21,7 +21,7 @@ export function GenresModalDelete({ isOpen, onClose, onDeleted, genre }: GenresM
             onDeleted();
             onClose();
         } catch (error) {
-          
+          console.error('Error:', error);
         }
     };
 

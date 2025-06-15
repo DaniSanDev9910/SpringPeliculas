@@ -38,16 +38,16 @@ export function AddMovie() {
     validate: (vals) => {
       const newErrors: Partial<Record<keyof MovieForm, string>> = {};
 
-      if (!vals.nombre.trim()) newErrors.nombre = 'Nombre is required';
+      if (!vals.nombre.trim()) newErrors.nombre = 'Movie title is required';
       if (!vals.director.trim()) newErrors.director = 'Director is required';
-      if (!vals.anio) newErrors.anio = 'Año is required';
-      if (!vals.idGenero) newErrors.idGenero = 'Genero is required';
+      if (!vals.anio) newErrors.anio = 'Release year is required';
+      if (!vals.idGenero) newErrors.idGenero = 'Genre is required';
       if (!vals.rating) newErrors.rating = 'Rating is required';
       if (!vals.sinopsis.trim()) newErrors.sinopsis = 'Sinopsis is required';
 
       const yearNum = parseInt(vals.anio);
-      if (!isNaN(yearNum) && (yearNum < 1800 || yearNum > new Date().getFullYear() + 5)) {
-        newErrors.anio = 'Please enter a valid year';
+      if (!isNaN(yearNum) && (yearNum < 1950 || yearNum > new Date().getFullYear())) {
+        newErrors.anio = 'Please enter a valid year (1950-2025)';
       }
 
       const ratingNum = parseFloat(vals.rating);
