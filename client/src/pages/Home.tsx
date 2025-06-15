@@ -7,45 +7,42 @@ import { obtenerPeliculas } from '../services/peliculaService';
 
 export function Home() {
   const [movies, setMovies] = useState<PeliculaDto[]>([]);
+  const [filteredMovies, setFilteredMovies] = useState<PeliculaDto[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Función para buscar películas
-  const fetchMovies = async (search?: string) => {
-    try {
-      setLoading(true);
-      setError('');
-      const data = await obtenerPeliculas(search);
-      setMovies(data || []); // Aseguramos que siempre sea un array
-    } catch (err: any) {
-      console.error('Error fetching movies:', err);
-      setError(err?.response?.data?.message || err?.message || 'Error loading movies');
-      setMovies([]); // Limpiamos las películas en caso de error
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Efecto inicial para cargar todas las películas
   useEffect(() => {
     fetchMovies();
   }, []);
 
-  // Efecto para buscar películas cuando cambia el término de búsqueda
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchTerm !== undefined) {
-        fetchMovies(searchTerm);
-      }
-    }, 300); // Debounce de 300ms
+    if (searchTerm) {
+      setFilteredMovies(
+        movies.filter((movie) =>
+          movie.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          movie.sinopsis.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          movie.director.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredMovies(movies);
+    }
+  }, [searchTerm, movies]);
 
-    return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
-
-  // Manejador para el cambio en el campo de búsqueda
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+  const fetchMovies = async () => {
+    try {
+      setLoading(true);
+      const data = await obtenerPeliculas();
+      setMovies(data);
+      setFilteredMovies(data);
+      setError('');
+    } catch (err) {
+      setError('Error loading movies');
+      console.error('Error fetching movies:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,7 +56,7 @@ export function Home() {
         </p>
       </div>
 
-      <SearchBar value={searchTerm} onChange={handleSearchChange} />
+      <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
 
       {loading ? (
         <div className="text-center py-16">
@@ -71,14 +68,8 @@ export function Home() {
           <Film className="h-16 w-16 text-slate-600 mx-auto mb-4" />
           <h3 className="text-xl font-medium text-red-400 mb-2">Error</h3>
           <p className="text-slate-500">{error}</p>
-          <button 
-            onClick={() => fetchMovies(searchTerm)}
-            className="mt-4 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
-          >
-            Try Again
-          </button>
         </div>
-      ) : movies.length === 0 ? (
+      ) : filteredMovies.length === 0 ? (
         <div className="text-center py-16">
           <Film className="h-16 w-16 text-slate-600 mx-auto mb-4" />
           <h3 className="text-xl font-medium text-slate-400 mb-2">
@@ -94,15 +85,15 @@ export function Home() {
         <>
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-semibold text-white">
-              {searchTerm ? `Search Results (${movies.length})` : 'Your Collection'}
+              {searchTerm ? `Search Results (${filteredMovies.length})` : 'Your Collection'}
             </h2>
             <span className="text-slate-400">
-              {movies.length} movie{movies.length !== 1 ? 's' : ''}
+              {filteredMovies.length} movie{filteredMovies.length !== 1 ? 's' : ''}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {movies.map((movie) => (
+            {filteredMovies.map((movie) => (
               <MovieCard key={movie.id} movie={movie} />
             ))}
           </div>
