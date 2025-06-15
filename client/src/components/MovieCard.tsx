@@ -1,5 +1,5 @@
 import React from 'react';
-import { User } from 'lucide-react';
+import { User, Calendar, Star } from 'lucide-react';
 import { PeliculaDto } from '../dto/PeliculaDto';
 
 interface MovieCardProps {
@@ -24,18 +24,28 @@ export function MovieCard({ movie }: MovieCardProps) {
       </div>
       
       <div className="p-6">
-        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-amber-500 transition-colors duration-200">
-          {movie.nombre}
-        </h3>
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-xl font-bold text-white group-hover:text-amber-500 transition-colors duration-200">
+            {movie.nombre}
+          </h3>
+          <div className="flex items-center bg-amber-500/20 rounded-lg px-2 py-1">
+            <Star className="h-4 w-4 text-amber-500 mr-1" />
+            <span className="text-amber-500 font-semibold">{movie.rating}</span>
+          </div>
+        </div>
         
         <p className="text-slate-300 text-sm mb-4 line-clamp-3">
           {movie.sinopsis}
         </p>
         
-        <div className="flex items-center justify-between text-sm text-slate-400 mb-3">
+        <div className="flex items-center justify-between text-sm text-slate-400">
           <div className="flex items-center space-x-1">
             <User className="h-4 w-4" />
             <span>{movie.director}</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <Calendar className="h-4 w-4" />
+            <span>{movie.anio}</span>
           </div>
         </div>
       </div>
