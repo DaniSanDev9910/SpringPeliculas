@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { PeliculaDto } from '../dto/types';
+import { PeliculaDto } from '../types';
 
 //const API_URL = 'http://localhost:8081/API/v1/pelicula/';
 const API_URL = '/API/v1/pelicula/';
 
-export const obtenerPeliculas = async (nombreParcial: string = '') => {
+export const getMovies = async (nombreParcial: string = '') => {
   const { data } = await axios.get(`${API_URL}findAllPelicula?nombreParcial=${nombreParcial}`);
   return data;
 };

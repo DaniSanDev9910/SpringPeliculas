@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SearchBar } from '../components/SearchBar';
 import { MovieCard } from '../components/MovieCard';
 import { Film } from 'lucide-react';
-import { PeliculaDto } from '../dto/PeliculaDto';
-import { obtenerPeliculas } from '../services/peliculaService';
+import { PeliculaDto } from '../types';
+import { getMovies } from '../services/movieService';
 
 export function Home() {
   const [movies, setMovies] = useState<PeliculaDto[]>([]);
@@ -33,7 +33,7 @@ export function Home() {
   const fetchMovies = async () => {
     try {
       setLoading(true);
-      const data = await obtenerPeliculas();
+      const data = await getMovies();
       setMovies(data);
       setFilteredMovies(data);
       setError('');
