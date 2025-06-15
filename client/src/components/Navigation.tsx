@@ -1,5 +1,5 @@
 import { Drama, Film, Info, Mail, Plus } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 
 export function Navigation() {
   const location = useLocation();

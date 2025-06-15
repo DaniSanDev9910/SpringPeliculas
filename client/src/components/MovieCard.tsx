@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { User, Calendar, Star, Film, Eye } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { PeliculaDto } from '../dto/PeliculaDto';
 import { GeneroDto } from '../dto/GeneroDto';
 import { obtenerGeneros } from '../services/generoService';
