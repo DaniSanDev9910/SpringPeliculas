@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignorar configuración CORS temporal
+src/main/java/com/gateway_service/CorsGlobalConfig.java
