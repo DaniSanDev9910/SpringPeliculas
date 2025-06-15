@@ -13,6 +13,8 @@ public class PeliculaMapper {
         peliculaDto.setIdGenero(pelicula.getIdGenero());
         peliculaDto.setImagen(pelicula.getImagen());
         peliculaDto.setDirector(pelicula.getDirector());
+        peliculaDto.setAnio(pelicula.getAnio());
+        peliculaDto.setRating(pelicula.getRating());
 
         return peliculaDto;
     }
@@ -26,6 +28,8 @@ public class PeliculaMapper {
         peliculaEnt.setIdGenero(pelicula.getIdGenero());
         peliculaEnt.setImagen(pelicula.getImagen());
         peliculaEnt.setDirector(pelicula.getDirector());
+        peliculaEnt.setAnio(pelicula.getAnio());
+        peliculaEnt.setRating(pelicula.getRating());
 
         return peliculaEnt;
     }
