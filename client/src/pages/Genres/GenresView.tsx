@@ -15,7 +15,7 @@ export function Genres() {
     axios
       .get('http://localhost:8090/API/v1/genero/findAllGenero')
       .then((res) => setGenres(res.data))
-      .catch((err) => console.error('Error cargando géneros:', err));
+      .catch((err) =>  err);
   };
 
   useEffect(() => {

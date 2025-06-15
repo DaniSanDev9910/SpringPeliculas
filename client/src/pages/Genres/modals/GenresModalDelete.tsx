@@ -21,7 +21,7 @@ export function GenresModalDelete({ isOpen, onClose, onDeleted, genre }: GenresM
             onDeleted();
             onClose();
         } catch (error) {
-            console.error('Error al eliminar género:', error);
+          
         }
     };
 
@@ -32,7 +32,7 @@ export function GenresModalDelete({ isOpen, onClose, onDeleted, genre }: GenresM
             <div className="bg-slate-800 p-6 rounded-xl shadow-xl w-full max-w-md text-white">
                 <h2 className="text-xl font-bold mb-4">Delete genre?</h2>
                 <p>
-                    ¿are you sure you want to delete the genre <strong>{genre.nombre}</strong>?
+                    are you sure you want to delete the genre <strong>{genre.nombre}</strong>?
                 </p>
                 <div className="flex justify-end mt-6 space-x-2">
                     <button onClick={onClose} className="px-4 py-2 text-slate-400 hover:text-white">

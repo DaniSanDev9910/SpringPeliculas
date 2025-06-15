@@ -38,7 +38,6 @@ export function GenresModalForm({ isOpen, onClose, onSaved, genre }: GenresModal
             onSaved();
             onClose();
         } catch (error) {
-            console.error('Error to save genre:', error);
         }
     };
 
