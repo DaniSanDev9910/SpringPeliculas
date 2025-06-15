@@ -10,4 +10,6 @@ public class PeliculaDto {
     private String idGenero;
     private String imagen;
     private String director;
+    private int anio;
+    private double rating;
 }
