@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { User, Calendar, Star, Film } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { PeliculaDto } from '../dto/PeliculaDto';
 import { GeneroDto } from '../dto/GeneroDto';
 import { obtenerGeneros } from '../services/generoService';
@@ -9,6 +10,7 @@ interface MovieCardProps {
 }
 
 export function MovieCard({ movie }: MovieCardProps) {
+  const navigate = useNavigate();
   const [generos, setGeneros] = useState<GeneroDto[]>([]);
   const [generoNombre, setGeneroNombre] = useState<string>('');
 
@@ -31,8 +33,15 @@ export function MovieCard({ movie }: MovieCardProps) {
     }
   }, [generos, movie.idGenero]);
 
+  const handleClick = () => {
+    navigate(`/movie/${movie.id}`);
+  };
+
   return (
-    <div className="bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group">
+    <div 
+      onClick={handleClick}
+      className="bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group cursor-pointer"
+    >
       <div className="aspect-w-16 aspect-h-9 bg-slate-700">
         {movie.imagen ? (
           <img
