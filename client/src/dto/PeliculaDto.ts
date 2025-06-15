@@ -4,5 +4,7 @@ export type PeliculaDto = {
   sinopsis: string,
   imagen: string,
   idGenero: string,
-  director: string
+  director: string,
+  anio: number,
+  rating: number
 };

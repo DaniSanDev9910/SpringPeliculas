@@ -1,11 +1,49 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SearchBar } from '../components/SearchBar';
 import { MovieCard } from '../components/MovieCard';
-import { useMovies } from '../context/MoviesContext';
 import { Film } from 'lucide-react';
+import { PeliculaDto } from '../dto/PeliculaDto';
+import { obtenerPeliculas } from '../services/peliculaService';
 
 export function Home() {
-  const { filteredMovies, searchTerm } = useMovies();
+  const [movies, setMovies] = useState<PeliculaDto[]>([]);
+  const [filteredMovies, setFilteredMovies] = useState<PeliculaDto[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchMovies();
+  }, []);
+
+  useEffect(() => {
+    if (searchTerm) {
+      setFilteredMovies(
+        movies.filter((movie) =>
+          movie.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          movie.sinopsis.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          movie.director.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredMovies(movies);
+    }
+  }, [searchTerm, movies]);
+
+  const fetchMovies = async () => {
+    try {
+      setLoading(true);
+      const data = await obtenerPeliculas();
+      setMovies(data);
+      setFilteredMovies(data);
+      setError('');
+    } catch (err) {
+      setError('Error loading movies');
+      console.error('Error fetching movies:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -18,9 +56,20 @@ export function Home() {
         </p>
       </div>
 
-      <SearchBar />
+      <SearchBar value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
 
-      {filteredMovies.length === 0 ? (
+      {loading ? (
+        <div className="text-center py-16">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-500 mx-auto"></div>
+          <p className="text-slate-400 mt-4">Loading movies...</p>
+        </div>
+      ) : error ? (
+        <div className="text-center py-16">
+          <Film className="h-16 w-16 text-slate-600 mx-auto mb-4" />
+          <h3 className="text-xl font-medium text-red-400 mb-2">Error</h3>
+          <p className="text-slate-500">{error}</p>
+        </div>
+      ) : filteredMovies.length === 0 ? (
         <div className="text-center py-16">
           <Film className="h-16 w-16 text-slate-600 mx-auto mb-4" />
           <h3 className="text-xl font-medium text-slate-400 mb-2">
