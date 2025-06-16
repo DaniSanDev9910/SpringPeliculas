@@ -22,7 +22,7 @@ public class VisualizacionService {
 
     public Boolean createVisualizacion(VisualizacionDto visualizacionDto){
 
-        PeliculaDto peliculaDto = clienteRest.getForObject("http://localhost:9091/API/v1/pelicula/findPeliculaById?iPelicula=" + visualizacionDto.getIdPelicula(), PeliculaDto.class);
+        PeliculaDto peliculaDto = clienteRest.getForObject("http://localhost:8081/API/v1/pelicula/findPeliculaById?iPelicula=" + visualizacionDto.getIdPelicula(), PeliculaDto.class);
 
         if(Objects.isNull(peliculaDto)){
             throw new ObjectAlreadyExists("La pelicula no existe!!!");
